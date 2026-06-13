@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createTask } from '../services/api';
 import type { TaskInput } from '../types';
-import NavBar from '../components/UniversalComp/NavBar';
 
 interface NewTaskPageProps {
   onTaskCreated?: () => void;
 }
 
 export const NewTaskPage: React.FC<NewTaskPageProps> = ({ onTaskCreated }) => {
+  const navigate = useNavigate();
+  const today = new Date().toISOString().split('T')[0];
   const [form, setForm] = useState<Omit<TaskInput, '_id'>>({
     title: '',
     description: '',
@@ -39,6 +41,14 @@ export const NewTaskPage: React.FC<NewTaskPageProps> = ({ onTaskCreated }) => {
       setError('Task title is required');
       return;
     }
+    if (!form.dueDate) {
+      setError('Due date is required');
+      return;
+    }
+    if (form.dueDate < today) {
+      setError('Due date cannot be in the past');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -51,6 +61,7 @@ export const NewTaskPage: React.FC<NewTaskPageProps> = ({ onTaskCreated }) => {
         dueDate: new Date().toISOString().split('T')[0],
       });
       onTaskCreated?.();
+      navigate('/my-tasks');
     } catch (err) {
       setError('Failed to create task. Please try again.');
     } finally {
@@ -95,6 +106,20 @@ export const NewTaskPage: React.FC<NewTaskPageProps> = ({ onTaskCreated }) => {
             placeholder="Briefly describe your task..."
             rows={4}
             className="w-full p-3 border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00D5BE]"
+          />
+        </div>
+
+        {/* Due Date */}
+        <div>
+          <label className="block text-[#374151] font-[Poppins] font-semibold mb-2">Due Date</label>
+          <input
+            type="date"
+            name="dueDate"
+            value={form.dueDate}
+            min={today}
+            onChange={handleChange}
+            className="w-full p-3 border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+            required
           />
         </div>
 
@@ -146,7 +171,7 @@ export const NewTaskPage: React.FC<NewTaskPageProps> = ({ onTaskCreated }) => {
       <div className="flex justify-center mt-10">
         <button
           onClick={scrollToTop}
-          className="bg-[gray-200] hover:bg-[#D1D5DB] text-[#374151] font-[Poppins] font-medium px-5 py-2 rounded-full transition"
+          className="bg-gray-200 hover:bg-[#D1D5DB] text-[#374151] font-[Poppins] font-medium px-5 py-2 rounded-full transition"
         >
            Back to Top
         </button>

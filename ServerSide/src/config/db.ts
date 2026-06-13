@@ -1,12 +1,15 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
-import { connected } from "node:process";
 
 dotenv.config();
 
 const connectDB = async (): Promise<void> => {
     try {
-        await mongoose.connect(process.env.MONGODB_URI as string);
+        const uri = process.env.MONGODB_URI;
+        if (!uri) {
+            throw new Error('MONGODB_URI is not defined in the environment');
+        }
+        await mongoose.connect(uri);
         console.log( 'MongoDB connected' );
 
     } catch (error) {

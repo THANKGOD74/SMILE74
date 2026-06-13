@@ -14,8 +14,6 @@ function App() {
           <Route path="/my-tasks" element={<MyTaskPage />} />
           <Route path="/new-task" element={<NewTaskPage />} />
           <Route path="/edit-task/:id" element={<EditTaskPage />} />
-          <Route path="/new-task" element={<NewTaskPage />} />
-          <Route path="/my-tasks" element={<MyTaskPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

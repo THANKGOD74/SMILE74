@@ -1,30 +1,38 @@
-import mongoose from "mongoose";
-import { Schema, Document } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { ITask } from "../types";
 
+export interface ITaskDocument extends ITask {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
-export interface ITaskDocument extends ITask, Document {} 
-
-const TaskSchema = new Schema<ITaskDocument>({
+const TaskSchema = new Schema({
     title: {
         type: String,
-         required: true
-    }, 
+        required: true
+    },
     description: {
         type: String
     },
     dueDate: {
         type: Date
-    }, 
+    },
     category: {
-        type: String, enum: [ 'work', 'personal', 'urgent' ],
+        type: String,
+        enum: [ 'Work', 'Personal', 'Urgent', 'Important' ],
         required: true
     },
     completed: {
         type: Boolean,
-        default: false 
+        default: false
     }
 }, {timestamps: true});
 
 
-export default mongoose.model<ITaskDocument>('Task', TaskSchema);
+// Mongoose 9 + TS 6 over-instantiate the schema's inferred type (TS2589).
+// Casting the schema argument breaks that type-level recursion; the result is
+// re-asserted to the proper document model so callers keep full typing.
+const Task = mongoose.model('Task', TaskSchema as any);
+
+export default Task;

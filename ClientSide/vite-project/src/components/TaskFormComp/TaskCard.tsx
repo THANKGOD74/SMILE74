@@ -11,14 +11,14 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleComplete }) => {
-  const isOverdue = !task.completed && new Date(task.dueDate) < new Date();
+  const isOverdue = !task.completed && !!task.dueDate && new Date(task.dueDate) < new Date();
 
   // Category colors – keys are capitalized (for display), but we'll handle input case
   const categoryColors: Record<string, string> = {
     Urgent: 'bg-[#FEE2E2] text-[#B91C1C]',
     Important: 'bg-[#FFEDD5] text-[#c2410c]',
     Work: 'bg-[#CCFBF1] text-[#0F766E]',
-    Personal: 'bg-[#FEF9C3] text-[yellow-700]',
+    Personal: 'bg-[#FEF9C3] text-yellow-700',
   };
 
   // Capitalize first letter of category (e.g., "work" → "Work") for color lookup
@@ -26,50 +26,48 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleCom
   const badgeColor = categoryColors[categoryKey] || 'bg-gray-100 text-gray-700';
 
   return (
-    <div className='container mx-auto w-11/12'>
-      <div className={`bg-[#FFFFFF] rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-200 border ${task.completed ? 'opacity-75 bg-[#F9FAFB]' : ''}`}>
-        <div className="flex justify-between items-start mb-3">
-        
-          <span className={`text-xs px-3 py-1 rounded-full font-[Poppins] font-semibold ${badgeColor}`}>
-            {categoryKey}
-          </span>
-        </div>
-        <div className='border-b border-[#6B7280] mb-2'>
-          <p className="text-[#4B5563] font-[Poppins] font-semibold text-sm mb-3">
-            {task.description || 'No description'}
-          </p>
-          <p className="text-xs text-[#6B7280] mb-4">
-            Due: {new Date(task.dueDate).toDateString()}
-            {isOverdue && <span className="text-[#EF4444] ml-2 font-[Poppins] font-semibold">(Overdue)</span>}
-          </p>
-        </div>
-
-        <div className="flex flex-row justify-between items-center">
-          <span>
-            <button
+    <div className={`w-full px-6 py-5 transition-colors ${task.completed ? 'bg-[#F9FAFB] opacity-80' : 'bg-[#FFFFFF] hover:bg-[#FAFAFA]'}`}>
+      {/* Top row: title (left) + action buttons (right) on the same line */}
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-3">
+        <h3 className={`font-[Poppins] font-semibold text-[#134E4A] text-lg leading-snug ${task.completed ? 'line-through text-[#6B7280]' : ''}`}>
+          {task.title}
+        </h3>
+        <div className="flex items-center gap-2">
+          <button
             onClick={() => onToggleComplete(task._id, !task.completed)}
-            className="font-[Poppins] font-medium text-xs bg-[#F3F4F6] hover:bg-[#DCFCE7] px-3 py-1.5 rounded-full transition"
+            className="font-[Poppins] font-medium text-xs bg-[#F3F4F6] hover:bg-[#DCFCE7] px-3 py-1.5 rounded-none transition"
           >
-            {task.completed ? ' Done' : ' Mark Done'}
+            {task.completed ? 'Done' : 'Mark Done'}
           </button>
-          </span>
-          <span className='flex gap-2'>
-            <button
+          <button
             onClick={() => onEdit(task)}
-            className="bg-[#974FD0] hover:bg-[#eab308] px-3 py-1.5 rounded-lg flex flex-row justify-center items-center gap-1"
+            className="bg-[#974FD0] hover:bg-[#7E3BB5] px-3 py-1.5 rounded-none flex flex-row justify-center items-center gap-1 transition"
           >
             <img className='w-3 h-3' src={clarity} alt="" />
             <p className='font-[Poppins] text-[#FFFFFF] text-xs'>Edit</p>
           </button>
           <button
             onClick={() => onDelete(task._id)}
-            className="bg-[#F3F4F6] hover:bg-[#FEE2E2] px-3 py-1.5 rounded-lg flex flex-row justify-center items-center gap-2"
+            className="bg-[#F3F4F6] hover:bg-[#FEE2E2] px-3 py-1.5 rounded-none flex flex-row justify-center items-center gap-2 transition"
           >
             <img className='w-3 h-3' src={deleteIcon} alt="" />
             <p className='font-[Poppins] text-[#974FD0] text-xs'>Delete</p>
           </button>
-          </span>
         </div>
+      </div>
+
+      {/* Task details below the title/actions row */}
+      <div className="flex flex-col gap-2">
+        <span className={`w-fit text-xs px-3 py-1 rounded-none font-[Poppins] font-semibold ${badgeColor}`}>
+          {categoryKey}
+        </span>
+        <p className="text-[#4B5563] font-[Poppins] text-sm">
+          {task.description || 'No description'}
+        </p>
+        <p className="text-xs text-[#6B7280]">
+          Due: {task.dueDate ? new Date(task.dueDate).toDateString() : 'No due date'}
+          {isOverdue && <span className="text-[#EF4444] ml-2 font-[Poppins] font-semibold">(Overdue)</span>}
+        </p>
       </div>
     </div>
   );

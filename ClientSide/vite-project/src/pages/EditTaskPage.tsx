@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchTasks, updateTask } from '../services/api';
 import type { Task } from '../types';
-import NavBar from '../components/UniversalComp/NavBar';
 
 export const EditTaskPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -107,7 +106,6 @@ export const EditTaskPage: React.FC = () => {
 
   return (
     <>
-    <NavBar/>
     <div className="max-w-2xl mx-auto px-4 py-8 bg-gray-50 min-h-screen">
       <div className="flex items-center gap-4 mb-6">
         <button
@@ -140,6 +138,18 @@ export const EditTaskPage: React.FC = () => {
             onChange={handleChange}
             rows={6}
             className="w-full p-3 border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+          />
+        </div>
+
+        <div>
+          <label className="block text-[#374151] font-[Poppins] font-semibold mb-2">Due Date</label>
+          <input
+            type="date"
+            name="dueDate"
+            value={task.dueDate ? task.dueDate.split('T')[0] : ''}
+            onChange={handleChange}
+            className="w-full p-3 border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2DD4BF]"
+            required
           />
         </div>
 
