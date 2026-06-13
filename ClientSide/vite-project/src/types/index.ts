@@ -2,7 +2,7 @@ export interface Task {
   _id: string;
   title: string;
   description?: string;
-  dueDate: string;        
+  dueDate?: string;
   category: 'Work' | 'Personal' | 'Urgent' | 'Important';
   completed: boolean;
   createdAt?: string;
@@ -13,7 +13,7 @@ export interface Task {
 export interface TaskInput {
   title: string;
   description?: string;
-  dueDate: string;       
+  dueDate?: string;
   category: 'Work' | 'Personal' | 'Urgent' | 'Important';
   completed: boolean;
 }

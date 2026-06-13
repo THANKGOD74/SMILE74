@@ -29,14 +29,19 @@ export const MyTaskPage: React.FC = () => {
   };
 
   const handleSubmit = async (taskData: TaskInput) => {
-    if (editingTask) {
-      await updateTask(editingTask._id, taskData);
-    } else {
-      await createTask(taskData);
+    try {
+      if (editingTask) {
+        await updateTask(editingTask._id, taskData);
+      } else {
+        await createTask(taskData);
+      }
+      setShowForm(false);
+      setEditingTask(null);
+      await loadTasks();
+    } catch (err) {
+      console.error('Failed to save task', err);
+      alert('Failed to save task. Please try again.');
     }
-    setShowForm(false);
-    setEditingTask(null);
-    loadTasks();
   };
 
   const handleEdit = (task: Task) => {
