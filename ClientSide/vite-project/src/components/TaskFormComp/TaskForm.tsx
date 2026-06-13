@@ -21,7 +21,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, editingTask, onCancel }) 
       setForm({
         title: editingTask.title,
         description: editingTask.description || '',
-        dueDate: editingTask.dueDate.split('T')[0],
+        dueDate: editingTask.dueDate ? editingTask.dueDate.split('T')[0] : '',
         category: editingTask.category,
         completed: editingTask.completed,
       });
@@ -38,8 +38,10 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, editingTask, onCancel }) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title.trim() || !form.dueDate) return;
-    onSubmit(form);
+    if (!form.title.trim()) return;
+    // Send every edited field; omit dueDate when empty so the backend
+    // doesn't try to cast '' to a Date (which would fail and skip the update).
+    onSubmit({ ...form, dueDate: form.dueDate || undefined });
     if (!editingTask) {
       setForm({
         title: '',
