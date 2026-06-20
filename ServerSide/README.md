@@ -7,18 +7,27 @@ Users can create, read, update, delete, and filter tasks by category and complet
 
 ##  Features
 
+### Task Management
 -  **CRUD operations** – Create, Read, Update, Delete tasks
 -  **Category grouping** – Urgent, Important, Work, Personal
 -  **Mark as done / pending** – Toggle completion status
 -  **Filter tasks** – By category (All, Work, Personal, Urgent, Important) and by status (All, Completed, Pending)
 -  **Due date validation** – Cannot be in the past
 -  **Clean UI** – Tailwind CSS, responsive cards, category‑colored badges
--  **Navigation** – React Router with a navbar and separate pages for:
-  - Cover page
-  - My Tasks (grouped list)
-  - New Task form
-  - Edit Task form
--  **Backend API** – RESTful endpoints with proper error handling and HTTP status codes
+
+### Authentication & Authorization
+-  **User registration** – Secure sign‑up with email verification
+-  **Login / Logout** – JWT‑based authentication
+-  **Email verification** – Verify email before accessing the app
+-  **Password reset** – Reset password via email (Brevo integration)
+-  **Profile management** – Update name and password
+-  **Protected routes** – Redirect to login if not authenticated
+-  **User isolation** – Each user sees only their own tasks
+
+### Frontend Enhancements
+-  **Smooth animations** – Framer Motion for page transitions and interactions
+-  **Fully responsive** – Works on mobile, tablet, and desktop
+-  **Loading states** – Spinners and disabled buttons during async operations
 
 ---
 
@@ -28,6 +37,9 @@ Users can create, read, update, delete, and filter tasks by category and complet
 - Node.js + Express
 - MongoDB + Mongoose (ODM)
 - TypeScript
+- JWT (JSON Web Tokens)
+- bcryptjs (password hashing)
+- Brevo (email service)
 - CORS, dotenv
 
 ### Frontend
@@ -36,36 +48,76 @@ Users can create, read, update, delete, and filter tasks by category and complet
 - Vite (build tool)
 - Tailwind CSS
 - React Router DOM
-- Axios
+- Axios (API client)
+- Framer Motion (animations)
+- Lucide React (icons)
 
 ---
 
-##  Folder Structure (Client Side)
+##  Folder Structure
 
-
-
----
-
-##  Installation & Setup
-
-### Prerequisites
-- Node.js (v18+)
-- MongoDB (local or Atlas cloud)
-- Git
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/taskduty.git
-cd taskduty
-
-
-{
-  "_id": "60f7b1f4f1a2b3c4d5e6f7a8",
-  "title": "Finish report",
-  "description": "Quarterly financial report",
-  "dueDate": "2026-06-30T00:00:00.000Z",
-  "category": "Work",
-  "completed": false,
-  "createdAt": "2026-06-12T10:00:00.000Z",
-  "updatedAt": "2026-06-12T10:00:00.000Z"
-}
+TaskDuty/
+├── ServerSide/ # Backend
+│ ├── src/
+│ │ ├── config/
+│ │ │ └── db.ts
+│ │ ├── controllers/
+│ │ │ ├── authController.ts
+│ │ │ └── taskController.ts
+│ │ ├── middleware/
+│ │ │ └── auth.ts
+│ │ ├── model/
+│ │ │ ├── Task.ts
+│ │ │ └── User.ts
+│ │ ├── routes/
+│ │ │ ├── authRoutes.ts
+│ │ │ └── taskRoutes.ts
+│ │ ├── services/
+│ │ │ └── emailService.ts
+│ │ ├── utils/
+│ │ │ ├── emailTemplates.ts
+│ │ │ └── jwt.ts
+│ │ └── server.ts
+│ ├── .env
+│ └── package.json
+│
+└── ClientSide/
+└── vite-project/ # Frontend
+├── src/
+│ ├── api/
+│ │ ├── api.ts
+│ │ ├── authApi.ts
+│ │ └── taskApi.ts
+│ ├── assets/
+│ ├── components/
+│ │ ├── ProtectedRoute.tsx
+│ │ ├── TaskFormComp/
+│ │ │ ├── CategorySection.tsx
+│ │ │ ├── TaskCard.tsx
+│ │ │ ├── TaskForm.tsx
+│ │ │ └── TaskList.tsx
+│ │ └── NavBar.tsx
+│ ├── context/
+│ │ └── AuthContext.tsx
+│ ├── hooks/
+│ │ └── useTaskManager.ts
+│ ├── layouts/
+│ │ └── MainLayout.tsx
+│ ├── pages/
+│ │ ├── CoverPage/
+│ │ ├── MyTaskPage/
+│ │ ├── NewTaskPage/
+│ │ ├── EditTaskPage/
+│ │ ├── LoginPage/
+│ │ ├── RegisterPage/
+│ │ ├── ProfilePage/
+│ │ ├── ForgotPasswordPage/
+│ │ ├── ResetPasswordPage/
+│ │ ├── VerificationSent.tsx
+│ │ └── EmailVerified.tsx
+│ ├── types/
+│ │ └── index.ts
+│ ├── App.tsx
+│ └── main.tsx
+├── .env
+└── package.json

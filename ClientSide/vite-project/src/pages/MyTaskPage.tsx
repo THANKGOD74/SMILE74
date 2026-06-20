@@ -26,7 +26,7 @@ export const MyTaskPage: React.FC = () => {
   const handleAddNew = () => {
     setEditingTask(null);
     setShowForm(true);
-  };
+  }
 
   const handleSubmit = async (taskData: TaskInput) => {
     try {
