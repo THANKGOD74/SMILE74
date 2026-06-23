@@ -5,12 +5,21 @@ import { fetchTrashedTasks, restoreTask, permanentDeleteTask } from '../services
 const TrashPage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadTasks = async () => {
     setLoading(true);
-    const data = await fetchTrashedTasks();
-    setTasks(data);
-    setLoading(false);
+    setError(null);
+    try {
+      const data = await fetchTrashedTasks();
+      console.log('Trashed tasks:', data);
+      setTasks(data);
+    } catch (err: any) {
+      console.error('Error loading trash:', err); 
+      setError(err.response?.data?.error || err.message || 'Failed to load trash');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -18,18 +27,45 @@ const TrashPage: React.FC = () => {
   }, []);
 
   const handleRestore = async (id: string) => {
-    await restoreTask(id);
-    loadTasks();
+    try {
+      await restoreTask(id);
+      loadTasks();
+    } catch (err: any) {
+      console.error('Error restoring task:', err);
+      alert('Failed to restore task. Please try again.');
+    }
   };
 
   const handlePermanentDelete = async (id: string) => {
     if (window.confirm('Permanently delete this task? This cannot be undone.')) {
-      await permanentDeleteTask(id);
-      loadTasks();
+      try {
+        await permanentDeleteTask(id);
+        loadTasks();
+      } catch (err: any) {
+        console.error('Error deleting task:', err);
+        alert('Failed to delete task. Please try again.');
+      }
     }
   };
 
   if (loading) return <div className="text-center py-10">Loading trash...</div>;
+
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-[#134E4A] mb-6">🗑️ Trash</h1>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <p>Error loading trash: {error}</p>
+          <button
+            onClick={loadTasks}
+            className="mt-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
