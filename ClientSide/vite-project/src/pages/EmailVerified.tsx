@@ -12,7 +12,7 @@ const EmailVerified = () => {
       className="min-h-screen flex items-center justify-center bg-gray-50 px-4"
     >
       <div className="bg-white p-8 rounded-2xl shadow-md max-w-md w-full text-center">
-        <h2 className="text-3xl font-bold text-teal-900 mb-4">Email Verified! ✅</h2>
+        <h2 className="text-3xl font-bold text-teal-900 mb-4">Email Verified! </h2>
         <p className="text-gray-600 mb-6">
           Your email has been successfully verified. You can now log in to your account.
         </p>

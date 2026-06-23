@@ -53,7 +53,7 @@ export const verificationEmailTemplate = (
           </div>
 
           <div class="body">
-            <h2>Welcome, ${name}! 👋</h2>
+            <h2>Welcome, ${name}! </h2>
             <p>Thanks for creating your TaskDuty account. Please verify your email address by clicking the button below.</p>
 
             <div class="btn-wrap">
@@ -119,7 +119,7 @@ export const welcomeEmailTemplate = (
           </div>
 
           <div class="body">
-            <h2>You're all set, ${name}! ✅</h2>
+            <h2>You're all set, ${name}! </h2>
             <p>Your email has been verified. You now have full access to TaskDuty – start creating tasks, stay organised, and boost your productivity.</p>
             <p style="color:#75928B;font-size:13px;">Welcome to the TaskDuty family!</p>
           </div>

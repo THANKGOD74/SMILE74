@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/protectedRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import { MyTaskPage } from './pages/MyTaskPage';
 import { NewTaskPage } from './pages/NewTaskPage';
@@ -14,6 +14,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerificationSent from './pages/VerificationSent';
 import EmailVerified from './pages/EmailVerified';
 import VerifyEmailHandler from './pages/VerifyEmailHandler';
+import TrashPage from './pages/TrashPage';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/new-task" element={<ProtectedRoute><NewTaskPage /></ProtectedRoute>} />
             <Route path="/edit-task/:id" element={<ProtectedRoute><EditTaskPage /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/trash" element={<ProtectedRoute><TrashPage /></ProtectedRoute>}/>
           </Route>
         </Routes>
       </BrowserRouter>

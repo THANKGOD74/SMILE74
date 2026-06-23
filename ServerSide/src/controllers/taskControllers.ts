@@ -21,15 +21,25 @@ export const createTask = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-// Get all tasks – only those belonging to the user
+// Get all tasks – only those belonging to the user and exclude sort-deleted task
 export const getTasks = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const tasks = await Task.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const tasks = await Task.find({ userId: req.user._id, deletedAt: null }).sort({ createdAt: -1 });
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
 };
+
+// Get all tasks – only those belonging to the user
+// export const getTasks = async (req: AuthRequest, res: Response): Promise<void> => {
+//   try {
+//     const tasks = await Task.find({ userId: req.user._id }).sort({ createdAt: -1 });
+//     res.json(tasks);
+//   } catch (error) {
+//     res.status(500).json({ error: (error as Error).message });
+//   }
+// };
 
 // Update a task – verify ownership first
 export const updateTask = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -56,70 +66,60 @@ export const updateTask = async (req: AuthRequest, res: Response): Promise<void>
 // Delete a task – verify ownership
 export const deleteTask = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const task = await Task.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+    const task = await Task.findOne({ _id: req.params.id, userId: req.user._id });
     if (!task) {
-      res.status(404).json({ error: "Task not found or you don't have permission" });
+      res.status(404).json({ error: 'Task not found' });
       return;
     }
-    res.json({ message: "Task deleted" });
+
+    // Soft delete: set deletedAt to current date
+    task.deletedAt = new Date();
+    await task.save();
+
+    res.json({ message: 'Task moved to trash' });
   } catch (error) {
-    res.status(400).json({ error: (error as Error).message });
+    res.status(500).json({ error: (error as Error).message });
   }
 };
 
 
 
+// Get all trashed tasks (soft-deleted)
+export const getTrashedTasks = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const tasks = await Task.find({ userId: req.user._id, deletedAt: { $ne: null } });
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
 
-// import { Request, Response } from "express";
-// import Task from "../model/Task";
+// Restore a task from trash
+export const restoreTask = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const task = await Task.findOne({ _id: req.params.id, userId: req.user._id });
+    if (!task) {
+      res.status(404).json({ error: 'Task not found' });
+      return;
+    }
+    task.deletedAt = null;
+    await task.save();
+    res.json({ message: 'Task restored' });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
 
-// export const createTask = async ( req: Request, res: Response ): Promise<void> => {
-//     try {
-//         const task = new Task(req.body)
-//         await task.save();
-//         res.status(201).json(task);
-//     } catch (error) {
-//         res.status(400).json({ error: (error as Error).message });
-//     }
-// };
-
-
-// export const getTasks = async ( req: Request, res: Response ): Promise<void> => {
-//     try {
-//         const tasks = await Task.find().sort({ createdAt: -1 });
-//         res.json(tasks);
-//     } catch (error) {
-//         res.status(500).json({ error: (error as Error).message });
-//     }
-// };
-
-
-// export const updateTasks = async ( req: Request, res: Response ): Promise<void> => {
-//     try {
-//         const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
-//             new: true,
-//             runValidators: true,
-//         });
-//         if (!task) {
-//             res.status(404).json({ error: 'Task does not exist' });
-//             return;
-//         }
-//         res.json(task);
-//     } catch (error) {
-//         res.status(400).json({ error: (error as Error).message });
-//     }
-// };
-
-
-// export const deleteTask = async ( req: Request, res: Response ): Promise<void> => {
-//     try {
-//         const task = await Task.findByIdAndDelete(req.params.id);
-//         if (!task) {
-//             res.status(404).json({ error: 'Task does not exist' });
-//             return;
-//         }
-//         res.json({ message: 'Task deleted' });
-//     } catch (error) {
-//         res.status(400).json({ error: (error as Error).message });
-//     }
-// };
+// Permanently delete a task (hard delete)
+export const permanentDeleteTask = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const task = await Task.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
+    if (!task) {
+      res.status(404).json({ error: 'Task not found' });
+      return;
+    }
+    res.json({ message: 'Task permanently deleted' });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
